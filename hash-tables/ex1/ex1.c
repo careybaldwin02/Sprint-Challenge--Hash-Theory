@@ -9,23 +9,43 @@ Answer *get_indices_of_item_weights(int *weights, int length, int limit)
 {
   HashTable *ht = create_hash_table(16);
 
+  int *index_1 = 0;
+  int *index_2 = 0;
+
   LinkedPair *current_pair;
   if(length>ht->capacity){
     printf("Too many values entered, cannot exceed, %d", ht->capacity);
   }
 
-  //place the weights into the hash table as the value in pair
+  //place the weights into the hash table as the keys and the weight indices as values
   for(int i = 0; i < ht->capacity; i++){
     current_pair = ht->storage[i]; //maybe use create_pair function?
     while(current_pair->next != NULL){
-      hash_table_insert(ht, current_pair->key, weights[i]);
+      // set keys as the weights and the values as weight indices
+      hash_table_insert(ht, weights[i], i);
       current_pair = current_pair -> next;
     }
   }
 
-  
+  //check the condition sum of weights == limit for each combination of two weights
+  //weights are the keys, so we can use retrieve
+  //we need to use the hash table instead of a nested for loop - how???
+  //see if one of the weights has a value equivalent to limit - another weight
+  //return the indices of the two weights
+  //index_1 = limit-index_2
+  for(int i = 0; i<ht->capacity; i++){
+    current_pair = ht->storage[i];
 
-  return NULL;
+    // use ht->current_pair->key and ht->current_pair->value
+    while(current_pair->next != NULL){
+      if(current_pair->key == limit - weights[i]){
+      hash_table_retrieve(ht, limit-current_pair->key);
+      }
+      index_1 = limit-current_pair->key;
+      index_2 = current_pair->key;
+    }
+  }
+  return index_1, index_2;
 }
 
 void print_answer(Answer *answer)
